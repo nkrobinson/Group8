@@ -1,0 +1,33 @@
+﻿Website fully functional on a variety of web browsers (Chrome, Firefox, Opera, Safari, Internet Explorer)
+
+Website has full functionality on mobile and tablet devices
+
+Website has a loading time of less than 3 seconds
+
+Website has a consistent theme/design
+
+Creating a profile should have clear and easily explained requirements
+
+Website can cope with many users accessing the website at once
+
+Users able to easily modify their personal data
+
+Users able to easily delete their personal data
+
+Pathway visualisation easy to understand
+
+Users data is held securely
+
+Users able to export picture of visualisation
+
+Users able to filter information in the visualisation
+	By career area
+	By education area
+
+Nodes on visualisation link to relevant information about that node
+
+Users able to choose levels of privacy between private, white-listing, and public
+
+Users can request to see other users profiles
+
+Users are split into three types: Normal user, Pathway creator & admin
