@@ -1,11 +1,42 @@
+/* ANIMATIONS */
 function regOpen(){
-	$('.regForm').slideDown(300);
-	$('.logForm').slideUp(300);
+	if($('.regForm').is(':visible')){
+		$('.regForm').slideUp(300);
+	}else{
+		if($('.logForm').is(':visible')){
+			$('.logForm').slideUp(300,function(){
+				$('.regForm').slideDown(300);
+			});
+		}else
+			$('.regForm').slideDown(300);
+	}
 }
 function logOpen(){
-	$('.logForm').slideDown(300);
-	$('.regForm').slideUp(300);
+	
+	if($('.logForm').is(':visible')){
+		$('.logForm').slideUp(300);
+	}else{
+		if($('.regForm').is(':visible')){
+			$('.regForm').slideUp(300, function(){
+				$('.logForm').slideDown(300);
+			});
+		}else
+			$('.logForm').slideDown(300);
+	}
 }
+function userOpen(){
+	if($('.userMenu').is(':visible'))
+		$('.userMenu').slideUp(300);
+	else
+		$('.userMenu').slideDown(300);
+}
+function logOut(){
+	$('.userMenu').slideUp(300);
+	$.get('logout',function(id){window.location.href="home"});
+}
+/* END ANIMATIONS */
+
+/* USER REGISTRATION/LOGIN/UPDATE */
 function authUser(id) {
         var message = "";
 
@@ -13,26 +44,52 @@ function authUser(id) {
 		if(id==2)
 			tmp=".logForm ";
         message += checkInput(tmp+".name", "Name");
+		if(id==1)
+	        message += checkInput(tmp+".email", "Email");
         message += checkInput(tmp+".pass", "Password");
+		
+		if(id==1)
+	        message += checkInput(tmp+".r-pass", "Repeat Password");
+		if(id==1){
+			if(($(tmp+'.r-pass').val()!=$(tmp+'.pass').val()) || $(tmp+'.pass').val().length<1){
+				$(tmp+'.r-pass, '+tmp+'.pass').addClass('error');
+				message += "Passwords do not match";
+			}else
+				$(tmp+'.r-pass, '+tmp+'.pass').removeClass('error')
+		}
         if (message == "") {
            	$.ajax({
 				type: "POST",
 				url: "lib/authUser.php",
 				dataType: "json",
 				data: {
-					name: $(tmp+".name").val(),
-					pass: $(tmp+".pass").val(),
+					username: $(tmp+".name").val(),
+					password: $(tmp+".pass").val(),
+					passwordConfirm: $(tmp+".r-pass").val(),
+					email: $(tmp+".email").val(),
 					type:id
 				}
 			}).done(function(response) {
+				console.log(response);
 				if (response.success) {
-					$('.navigation').html($(tmp+".name").val());
-					$('.logForm, .regForm').slideUp(300);
+					if(id==2){
+						$('.navigation').html("<u onclick='userOpen()' style='cursor:pointer;'>"+$(tmp+".name").val()+"</u>");
+						$('.logForm, .regForm').slideUp(300);
+					}
+					else{
+						$(tmp+".main-form").fadeOut(300, function(){
+							$(tmp+".confirmation").fadeIn(300);
+							setTimeout(function(){$('.logForm, .regForm').slideUp(300,function(){$(".regForm .main-form").show(); $(".regForm .confirmation").hide();}); },3000);
+						});
+					}
 				} else {
-					var txt="You already registered!";
-					if(id==2)
-						txt="WRONG DETAILS!";
-					alert(txt);
+					if(id==1){
+						var txt="You already registered!";
+						alert(txt);
+					}else{
+							$(tmp+".confirmation").fadeIn(300);
+							setTimeout(function(){$(".logForm .confirmation").hide(); },3000);
+					}
 				}
 			});
 
@@ -40,6 +97,38 @@ function authUser(id) {
             alert("Please enter these fields:\n\n" + message);
         }
 }
+function updateProfile() {
+        var message = "";
+
+	    message += checkInput("#container .email", "Email");
+        
+		
+        if (message == "") {
+           	$.ajax({
+				type: "POST",
+				url: "lib/updateUser.php",
+				dataType: "json",
+				data: {
+					name: $("#container .name").val(),
+					email: $("#container .email").val(),
+					nodes: [$("#container .university").val(), $("#container .discipline").val()]
+				}
+			}).done(function(response) {
+				console.log(response);
+				if (response.success) {
+					console.log("All good");
+					$('.succ').html("Details updated successfully");
+					setTimeout(function(){$('.succ').html("");},2000);
+				} else {
+					console.log("Something went wrong");
+				}
+			});
+
+        } else {
+            alert("Please enter these fields:\n\n" + message);
+        }
+}
+/* END USER REGISTRATION/LOGIN/UPDATE */
 
 // Validating input
 function checkInput(check_class, message) {

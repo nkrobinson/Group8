@@ -34,7 +34,7 @@ function getStart(){
 			$('.selection .item').on('click', function(){
 				$('.selection .item').fadeOut(200);
 				init($(this).data('id'));
-				//$('.loader').fadeIn(200);
+				$('#container').addClass("added-load");
 			});
 		}
 	});
@@ -53,7 +53,6 @@ function getData(id){
 		dataType: "JSON",
 		success: function (jso) {
 			//CHECK IN INSPECT ELEMENTS WHAT IS RETURNED
-			$('.loader').fadeOut(300);
 			var json=jso;
 			
 		}
@@ -77,6 +76,7 @@ function init(id){
 			console.log(JSON.stringify(jso));
 			$('.loader').fadeOut(300);
 			var json=jso;
+			$('#container').removeClass("added-load");
 			
 			/*var json = "{id:\"node01\", name:\"ROOT\", data:{}, children:[{id:\"node02\", name:\"TWO\", data:{}, children:[]}, {id:\"node03\", name:\"THREE\", data:{}, children:[]}]}";
 			var json_children ="[{id:\"node05\", name:\"Five\", data:{}, children:[]}]";
@@ -102,6 +102,7 @@ function startAnimation(){
 		var i = 0;
 		return function(nodeId, level) {
 			//JSON here to get all data from DB searching by nodeID
+			$('.selected-node').html($('#'+nodeId).text()+" at:<div class='holder'></div>").animate({'left':'600px', 'opacity':1}, 300);
 			$.ajax({
 				url: "lib/api.php",
 				type: "POST",
@@ -115,7 +116,6 @@ function startAnimation(){
 					//CHECK IN INSPECT ELEMENTS WHAT IS RETURNED
 					//$('.loader').fadeOut(300);
 					var json=jso;
-					$('.selected-node').html($('#'+nodeId).text()+" at:<div class='holder'></div>").animate({'left':'600px', 'opacity':1}, 300);
 					
 					for(var i=0;i<json.length;i++){
 						$('.selected-node .holder').append("<a href='"+json[i]['description']+"' target='_blank'>"+json[i]['name']+"</a><br />");
@@ -185,7 +185,7 @@ function startAnimation(){
 		orientation: 'left',
 		Node: {  
 			height: 30,  
-			width: 120,  
+			width: 160,  
 			type: 'rectangle',  
 			color: '#aaa',  
 			overridable: true  
@@ -220,7 +220,7 @@ function startAnimation(){
 			};
         	//set label styles  
 			var style = label.style;  
-			style.width = 120 + 'px';  
+			style.width = 160 + 'px';  
 			style.height = 27 + 'px';              
 			style.cursor = 'pointer';  
 			style.color = '#333';  

@@ -2,8 +2,6 @@
 include('../config.php');
 require("functions.php");
 
-//CONNECT MYSQL
-$pdo = conn();
 //Starting fun
 function getChild($id){
 	global $pdo;
@@ -11,7 +9,7 @@ function getChild($id){
 			
 	$query = $pdo->prepare("SELECT
 			rl.childID as 'child_id',
-			nl.typeID as 'type',
+			(SELECT nl.typeID FROM NODELIST nl WHERE child_id=nl.nodeID) as 'type',
 			(SELECT nl.name FROM NODELIST nl WHERE child_id=nl.nodeID) AS 'child'
 		FROM
 			RELATIONLIST rl,
@@ -25,8 +23,10 @@ function getChild($id){
 	$sqla = $query->fetchAll(PDO::FETCH_ASSOC);
 	
 	foreach ($sqla as $row) {
-		if($row['child_id']<12)
-			$child[] = array('id' => $row['child_id'], 'name' => $row['child'], "data"=>array(), "children"=>getChild($row['child_id']));
+		if($row['type']!=4) {
+			$child[] = array('id' => $row['child_id'], 'name' => $row['child'], 'type' => $row['type'], "data"=>array(), "children"=>getChild($row['child_id']));
+			
+		}
 	}
 	
 	return $child;
@@ -66,8 +66,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])){
 		
 		$query = $pdo->prepare("SELECT
 			rl.childID as 'child_id', rl.relationID as 'rel_id',
+			nl.typeID as 'type',
 			(SELECT nl.name FROM NODELIST nl WHERE child_id=nl.nodeID) AS 'child',
-			(SELECT description FROM RELATIONDESCRIPTION WHERE rel_id=relationID) AS 'desc'
+			(SELECT name FROM RELATIONDESCRIPTION WHERE rel_id=relationID) AS 'desc'
 		FROM
 			RELATIONLIST rl,
 			NODELIST nl
@@ -80,9 +81,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])){
 		
 		$sql = $query->fetchAll(PDO::FETCH_ASSOC);
 		$json=array();
-		foreach ($sql as $row) 
-			$json[]=array("name"=>$row['child'], "id"=>$row['child_id'], "description"=>$row['desc']);
-		
+		foreach ($sql as $row) {
+			$name = $row['child'];
+			$pattern = '/((?:(?!\sat\s).)+)(\sat\s)(.+)/s';
+			$replace = '$3';
+			$name = preg_replace($pattern, $replace, $name);
+			$json[]=array("name"=>$name, "id"=>$row['child_id'], "description"=>$row['desc'], "type"=>$row['type']);
+		}
 		header('Content-Type: application/json');
 		echo json_encode($json);
 		

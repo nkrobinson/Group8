@@ -8,4 +8,14 @@ function conn()
 
 	return $pdo;
 }
+function getNodes($id){
+	global $pdo;
+	
+	$query=$pdo->prepare("SELECT nodeID, name FROM NODELIST WHERE typeID=:id");
+	$query->bindParam(":id", $id);		
+	$query->execute();
+	
+	$sql = $query->fetchAll(PDO::FETCH_ASSOC);
+	return $sql;
+}
 ?>
