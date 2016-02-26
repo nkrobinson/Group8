@@ -189,7 +189,7 @@ a, a:hover, a:visited {
 	position:absolute;
 	top:30px;
 	right:10px;
-	background:white;
+	/* background:white; */
 	padding:20px;
 	z-index:33;
 }

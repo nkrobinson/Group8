@@ -4,9 +4,9 @@ session_start();
 
 //Mysql stuff
 $db_host = "localhost";
-$db_user = "u385662700_hwu";
-$db_db = "u385662700_hwu";
-$db_pass = "@rlcgqeS?[+x";
+$db_user = "nr124";
+$db_db = "nr124";
+$db_pass = "abcnr124354";
 
 date_default_timezone_set('Europe/London');
 

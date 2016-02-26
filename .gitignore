@@ -39,4 +39,4 @@ Thumbs.db
 
 # Explicit files #
 ##################
-config.php
+**/config.php

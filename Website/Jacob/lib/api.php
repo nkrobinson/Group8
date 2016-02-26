@@ -12,7 +12,7 @@ function getChild($id){
 			(SELECT nl.typeID FROM NODELIST nl WHERE child_id=nl.nodeID) as 'type',
 			(SELECT nl.name FROM NODELIST nl WHERE child_id=nl.nodeID) AS 'child'
 		FROM
-			RELATIONLIST rl,
+			NODERELATIONLIST rl,
 			NODELIST nl
 		WHERE 
 			rl.parentID=:id AND
@@ -68,9 +68,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])){
 			rl.childID as 'child_id', rl.relationID as 'rel_id',
 			nl.typeID as 'type',
 			(SELECT nl.name FROM NODELIST nl WHERE child_id=nl.nodeID) AS 'child',
-			(SELECT name FROM RELATIONDESCRIPTION WHERE rel_id=relationID) AS 'desc'
+			(SELECT rld.description FROM NODEDESCRIPTIONLIST rld WHERE child_id=rld.nodeID) AS 'desc'
 		FROM
-			RELATIONLIST rl,
+			NODERELATIONLIST rl,
+			NODEDESCRIPTIONLIST rld,
 			NODELIST nl
 		WHERE 
 			rl.parentID=:id AND
