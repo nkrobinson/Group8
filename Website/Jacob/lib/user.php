@@ -59,6 +59,47 @@ class User extends Password{
 		}
 	}
 
+	public function grades(){
+
+		try {
+			if($_SESSION['loggedin']){
+				$arr=array();
+				$stmt = $this->_db->prepare('SELECT g.gradeID as "id", sqa.name as "sqa", qual.name as "qual", qual.grade, qual.points FROM GRADELIST g, SQALIST sqa, QUALIFICATIONLIST qual WHERE g.userID = :username AND g.qualID=qual.qualID AND g.sqaID=sqa.sqaID');
+				$stmt->execute(array('username' => $_SESSION['userID']));
+				
+				$sqla = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	
+				return $sqla;
+			}
+
+		} catch(PDOException $e) {
+		    echo '<p class="bg-danger">'.$e->getMessage().'</p>';
+		}
+	}
+
+	public function countUcas(){
+
+		try {
+			if($_SESSION['loggedin']){
+				$stmt = $this->_db->prepare('SELECT sum(qual.points) as "points" FROM GRADELIST g, QUALIFICATIONLIST qual WHERE g.userID = :username AND g.qualID=qual.qualID');
+				$stmt->execute(array('username' => $_SESSION['userID']));
+				
+				$sqla = $stmt->fetchAll(PDO::FETCH_ASSOC);
+				$arr=0;
+				if($sqla){
+					foreach ($sqla as $row){
+						if($row['points']!==NULL)
+							$arr=$row['points'];
+					}
+				}
+				return $arr;
+			}
+
+		} catch(PDOException $e) {
+		    echo '<p class="bg-danger">'.$e->getMessage().'</p>';
+		}
+	}
+
 	public function updateDetails($arr){
 
 		try {
@@ -89,6 +130,44 @@ class User extends Password{
 				}
 	
 				return $arr;
+			}
+
+		} catch(PDOException $e) {
+		    return false;
+		}
+	}
+
+	public function insertGrade($node, $qual){
+
+		try {
+			if($_SESSION['loggedin']){
+				if(!empty($node) && !empty($qual)){
+					//sqaID - maths and etc, qualID - higher grade 1.
+					$stmt = $this->_db->prepare('INSERT INTO  GRADELIST SET sqaID=:node, qualID=:qual, userID=:username');
+					$stmt->execute(array('username' => $_SESSION['userID'], "node"=>$node, "qual"=>$qual));
+					return array("id"=>$this->_db->lastInsertId());
+				}
+	
+				return array("error"=>"details are wrong");
+			}
+
+		} catch(PDOException $e) {
+		    return false;
+		}
+	}
+
+	public function deleteGrade($id){
+
+		try {
+			if($_SESSION['loggedin']){
+				if(!empty($id)){
+					//sqaID - maths and etc, qualID - higher grade 1.
+					$stmt = $this->_db->prepare('DELETE FROM  GRADELIST WHERE gradeID=:qual AND userID=:username');
+					$stmt->execute(array('username' => $_SESSION['userID'], "qual"=>$id));
+					return true;
+				}
+	
+				return false;
 			}
 
 		} catch(PDOException $e) {

@@ -59,12 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			try {
 	
 				//insert into database with a prepared statement
+				$str="Yes";
 				$stmt = $pdo->prepare('INSERT INTO USERLIST (username,password,email,active) VALUES (:username, :password, :email, :active)');
 				$stmt->execute(array(
 					':username' => $_POST['username'],
 					':password' => $hashedpassword,
 					':email' => $_POST['email'],
-					':active' => $activasion
+					':active' => $str
+					//':active' => $activasion
 				));
 				$id = $pdo->lastInsertId('userID');
 	

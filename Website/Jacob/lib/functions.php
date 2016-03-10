@@ -18,4 +18,22 @@ function getNodes($id){
 	$sql = $query->fetchAll(PDO::FETCH_ASSOC);
 	return $sql;
 }
+function getSQA(){
+	global $pdo;
+	
+	$query=$pdo->prepare("SELECT sqaID, name FROM SQALIST ORDER BY name ASC");	
+	$query->execute();
+	
+	$sql = $query->fetchAll(PDO::FETCH_ASSOC);
+	return $sql;
+}
+function getGrades(){
+	global $pdo;
+	
+	$query=$pdo->prepare("SELECT * FROM QUALIFICATIONLIST ORDER BY name ASC, grade");	
+	$query->execute();
+	
+	$sql = $query->fetchAll(PDO::FETCH_ASSOC);
+	return $sql;
+}
 ?>
