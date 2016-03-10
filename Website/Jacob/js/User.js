@@ -111,6 +111,7 @@ function updateProfile() {
 				data: {
 					name: $("#container .name").val(),
 					email: $("#container .email").val(),
+					type:1,
 					nodes: [$("#container .university").val(), $("#container .discipline").val()]
 				}
 			}).done(function(response) {
@@ -127,6 +128,62 @@ function updateProfile() {
         } else {
             alert("Please enter these fields:\n\n" + message);
         }
+}
+function addGrade() {
+        var message = "";
+
+	    message += checkInput("#container .subj", "Select subject");
+	    message += checkInput("#container .grad", "Select grade");
+        
+		
+        if (message == "") {
+			console.log("c "+$("#container .subj").val()+" "+$("#container .grad").val());
+           	$.ajax({
+				type: "POST",
+				url: "lib/updateUser.php",
+				dataType: "json",
+				data: {
+					subject: $("#container .subj").val(),
+					grade: $("#container .grad").val(),
+					type:2
+				}
+			}).done(function(response) {
+				console.log(response);
+				if (response.success) {
+					var id=response.id;
+					var points=$("#container .grad option:selected").data("points");
+					$('#container .line.adding').before("<div class='line' data-id='"+id+"'>Subject: <span style='color:green'><u>"+$("#container .subj option:selected").html()+"</u></span> Grade: <span style='color:red'><u>"+$("#container .grad option:selected").html()+"</u></span>&emsp;<button onclick='deleteGrade("+id+", "+points+")'>Delete Grade</button></div>");
+					countUcas(points);
+					$("#container .subj option:selected").removeAttr("selected");
+					$("#container .grad option:selected").removeAttr("selected");
+					console.log("All good");
+					$('.succ').html("Grade added successfully");
+					setTimeout(function(){$('.succ').html("");},2000);
+				} else {
+					console.log("Something went wrong");
+				}
+			});
+
+        } else {
+            alert("Please enter these fields:\n\n" + message);
+        }
+}
+function countUcas(points){
+	$('.score').html(parseInt($('.score').html())+points);
+}
+function deleteGrade(id, points){
+	$('.line[data-id='+id+']').fadeOut(200);
+	$.ajax({
+				type: "POST",
+				url: "lib/updateUser.php",
+				dataType: "json",
+				data: {
+					id: id,
+					type:3
+				}
+			}).done(function(response) {
+				countUcas(-parseInt(points));
+			});
 }
 /* END USER REGISTRATION/LOGIN/UPDATE */
 
