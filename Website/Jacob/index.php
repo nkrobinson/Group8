@@ -76,7 +76,11 @@ $(document).ready(function(e) {
         <div id="log"></div>
     <?php }else if($page=="profile"){ 
 		$user_details=$user->details();
-		$user_node=$user->nodes(); ?>
+		$user_node=$user->nodes();
+		$user_grades=$user->grades();
+		$score=$user->countUcas();
+		//$user_node=$user->grades();
+	?>
     	<input type="text" maxlength="100" class="name" placeholder="Full Name" style="margin-top:200px;" value="<?php echo $user_details['name']; ?>" /><br />
     	<input type="text" maxlength="100" class="email" placeholder="Email" value="<?php echo $user_details['email']; ?>" /><br />
     	<select class="university">
@@ -94,9 +98,35 @@ $(document).ready(function(e) {
 				foreach ($sql as $row) 
 					echo "<option value='".$row['nodeID']."'  ".((in_array($row['nodeID'], $user_node))?"selected='selected'":"").">".$row['name']."</option>";
 				?>
-        </select><br /><br />
+        </select><br />
+        <label>Grades List</label>
+        <?php
+			foreach ($user_grades as $row) 
+				echo "<div class='line' data-id='".$row['id']."'>Subject: <span style='color:green'><u>".$row['sqa']."</u></span> Grade: <span style='color:red'><u>".$row['qual']." grade: ".$row['grade']."</u></span>&emsp;<button onclick='deleteGrade(".$row['id'].", ".$row['points'].")'>Delete Grade</button></div>";
+		?>
+        <div class="line adding">
+        <select class="subj">
+        	<option value="">Select subject</option>
+            <?php
+				$sql = getSQA();
+				foreach ($sql as $row) 
+					echo "<option value='".$row['sqaID']."'>".$row['name']."</option>";
+				?>
+        </select>
+        <select class="grad">
+        	<option value="">Select grade</option>
+            <?php
+				$sql = getGrades();
+				foreach ($sql as $row) 
+					echo "<option value='".$row['qualID']."' data-points='".$row['points']."'>".$row['name']." grade: ".$row['grade']."</option>";
+				?>
+        </select>
+        <button onclick="addGrade()">Add Grade</button>
+        </div><br />
+        <u>TOTAL UCAS POINTS: <span style="color:red;" class="score"><?php echo $score; ?></span></u>
+        <br /><br />
         <div style="color:#1A5E15; font-size:14px; text-align:center; width:100%;" class="succ"></div>
-        <input type="submit" onclick="updateProfile()" />
+        <input type="submit" onclick="updateProfile()" /><br /><br />
     <?php } ?>
 </div>
 </body>
