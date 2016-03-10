@@ -80,7 +80,7 @@ $(document).ready(function(e) {
     	<input type="text" maxlength="100" class="name" placeholder="Full Name" style="margin-top:200px;" value="<?php echo $user_details['name']; ?>" /><br />
     	<input type="text" maxlength="100" class="email" placeholder="Email" value="<?php echo $user_details['email']; ?>" /><br />
     	<select class="university">
-        	<option value="">University</option>
+        	<option value="">Preferred University</option>
             <?php
 				$sql = getNodes(3);
 				foreach ($sql as $row) 
@@ -88,9 +88,9 @@ $(document).ready(function(e) {
 				?>
         </select><br />
     	<select class="discipline">
-        	<option value="">Discipline</option>
+        	<option value="">Preferred Course</option>
             <?php
-				$sql = getNodes(1);
+				$sql = getNodes(2);
 				foreach ($sql as $row) 
 					echo "<option value='".$row['nodeID']."'  ".((in_array($row['nodeID'], $user_node))?"selected='selected'":"").">".$row['name']."</option>";
 				?>
