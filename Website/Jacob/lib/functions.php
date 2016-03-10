@@ -11,7 +11,7 @@ function conn()
 function getNodes($id){
 	global $pdo;
 	
-	$query=$pdo->prepare("SELECT nodeID, name FROM NODELIST WHERE typeID=:id");
+	$query=$pdo->prepare("SELECT nodeID, name FROM NODELIST WHERE typeID=:id ORDER BY name ASC");
 	$query->bindParam(":id", $id);		
 	$query->execute();
 	

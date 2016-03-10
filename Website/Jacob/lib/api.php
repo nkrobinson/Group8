@@ -12,7 +12,7 @@ function getChild($id){
 			(SELECT nl.typeID FROM NODELIST nl WHERE child_id=nl.nodeID) as 'type',
 			(SELECT nl.name FROM NODELIST nl WHERE child_id=nl.nodeID) AS 'child'
 		FROM
-			NODERELATIONLIST rl,
+			RELATIONLIST rl,
 			NODELIST nl
 		WHERE 
 			rl.parentID=:id AND
@@ -33,6 +33,7 @@ function getChild($id){
 }
 
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])){
+	//GET UNIVERSITIES by course
 	if($_POST['type']==1 && isset($_POST['university'])){
 		
 		$uni=$_POST['university'];
@@ -48,9 +49,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])){
 		
 		header('Content-Type: application/json');
 		echo json_encode($parent);
-	}else if($_POST['type']==2){
+	}
+	//GET BY DISCIPLINE (node ID)
+	else if($_POST['type']==2){
 		
-		$query = $pdo->prepare("SELECT nl.name, nl.nodeID FROM NODELIST nl WHERE nl.typeID=1");
+		$query = $pdo->prepare("SELECT nl.name, nl.nodeID FROM NODELIST nl WHERE nl.typeID=2");
 					
 		$query->execute();
 		
@@ -62,16 +65,17 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['type'])){
 		header('Content-Type: application/json');
 		echo json_encode($json);
 		
-	}else if($_POST['type']==3){
+	}
+	//
+	else if($_POST['type']==3){
 		
 		$query = $pdo->prepare("SELECT
 			rl.childID as 'child_id', rl.relationID as 'rel_id',
 			nl.typeID as 'type',
 			(SELECT nl.name FROM NODELIST nl WHERE child_id=nl.nodeID) AS 'child',
-			(SELECT rld.description FROM NODEDESCRIPTIONLIST rld WHERE child_id=rld.nodeID) AS 'desc'
+			(SELECT name FROM RELATIONDESCRIPTION WHERE rel_id=relationID) AS 'desc'
 		FROM
-			NODERELATIONLIST rl,
-			NODEDESCRIPTIONLIST rld,
+			RELATIONLIST rl,
 			NODELIST nl
 		WHERE 
 			rl.parentID=:id AND
